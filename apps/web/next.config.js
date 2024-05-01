@@ -43,40 +43,27 @@ module.exports = {
 	},
 	async redirects() {
 		return [
-			{
-				source: '/',
-				has: [
-					{ type: 'host', value: 'preview.labor-hematology.online' },
-				],
-				destination: 'https://preview.labor-hematology.online',
-				permanent: true,
-				statusCode: 301,
-			},
-			{
-				source: '/',
-				has: [
-					{
-						type: 'host',
-						value: 'dashboard.labor-hematology.online',
-					},
-				],
-				destination: 'https://dasboard.labor-hematology.online',
-				permanent: true,
-				statusCode: 301,
-			},
-
-			{
-				source: '/:path*',
-				has: [
-					{
-						type: 'host',
-						value: 'dashboard.labor-hematology.online',
-					},
-				],
-				destination: 'https://dasboard.labor-hematology.online/:path*',
-				permanent: true,
-				statusCode: 301,
-			},
+			// 	{
+			// 		source: '/',
+			// 		has: [
+			// 			{ type: 'host', value: 'preview.labor-hematology.online' },
+			// 		],
+			// 		destination: 'https://preview.labor-hematology.online',
+			// 		permanent: true,
+			// 		statusCode: 301,
+			// 	},
+			// 	{
+			// 		source: '/',
+			// 		has: [
+			// 			{
+			// 				type: 'host',
+			// 				value: 'dashboard.labor-hematology.online',
+			// 			},
+			// 		],
+			// 		destination: 'https://dasboard.labor-hematology.online',
+			// 		permanent: true,
+			// 		statusCode: 301,
+			// 	},
 		]
 	},
 }
