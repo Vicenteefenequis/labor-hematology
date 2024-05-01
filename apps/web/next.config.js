@@ -64,6 +64,19 @@ module.exports = {
 				permanent: true,
 				statusCode: 301,
 			},
+
+			{
+				source: '/:path*',
+				has: [
+					{
+						type: 'host',
+						value: 'dashboard.labor-hematology.online',
+					},
+				],
+				destination: 'https://dasboard.labor-hematology.online/:path*',
+				permanent: true,
+				statusCode: 301,
+			},
 		]
 	},
 }
