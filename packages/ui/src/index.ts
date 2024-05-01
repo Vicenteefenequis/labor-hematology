@@ -7,6 +7,11 @@ export * from './input'
 export * from './label'
 export * from './form'
 export * from './navigation-menu'
+export * from './command'
+export * from './dialog'
+export * from './popover'
+export * from './toggle-group'
+export * from './toggle'
 
 // providers
 export * from './theme-provider'
