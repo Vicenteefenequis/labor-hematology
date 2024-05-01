@@ -1,5 +1,4 @@
 import { Header } from '@/ui/header'
-import { LogoutButton } from '@/ui/logout-button'
 import React, { Suspense } from 'react'
 
 export default function Page() {
