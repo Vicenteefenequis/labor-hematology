@@ -8,8 +8,8 @@ export default function Page() {
 			<Suspense fallback={'Carregando'}>
 				<Header />
 			</Suspense>
-			Aqui você está em uma página protegida
-			<LogoutButton />
+
+			<div>Aqui você está em uma página protegida</div>
 		</div>
 	)
 }
