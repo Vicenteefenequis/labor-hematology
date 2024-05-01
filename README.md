@@ -41,7 +41,7 @@ cd my-saas-name
 pnpm build
 ```
 
-### Develop
+### Developer
 
 To develop all apps and packages, run the following command:
 
