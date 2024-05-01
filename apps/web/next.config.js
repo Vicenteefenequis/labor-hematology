@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
 	reactStrictMode: false,
+	experimental: {
+		missingSuspenseWithCSRBailout: false,
+	},
 	async headers() {
 		return [
 			{

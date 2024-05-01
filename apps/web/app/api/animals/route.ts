@@ -3,6 +3,8 @@ import { handleAndReturnErrorResponse } from '@/lib/api/errors'
 import { getPagination, getSearchParams, handlePaginate } from '@labor/utils'
 import { animalSchema } from '@/lib/zod/animal-schema'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
 	try {
 		const body = await request.json()
