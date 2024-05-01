@@ -1,0 +1,3 @@
+{
+	"extends": "@labor/ts-config/base.json"
+}
