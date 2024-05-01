@@ -48,8 +48,8 @@ export default function Sidebar() {
 			</div>
 
 			<div className="flex flex-col gap-4 flex-1">
-				{components.map(({ icon: Icon, label, href }) => (
-					<Button variant={isActiveVariant(href)} asChild>
+				{components.map(({ icon: Icon, label, href }, i) => (
+					<Button key={i} variant={isActiveVariant(href)} asChild>
 						<Link href={href}>
 							<Icon /> {label}
 						</Link>
