@@ -4,6 +4,22 @@ module.exports = {
 	experimental: {
 		missingSuspenseWithCSRBailout: false,
 	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'dsovvfdmameehzfbihnl.supabase.co',
+				pathname: '/**',
+				port: '',
+			},
+			{
+				protocol: 'https',
+				hostname: '*.googleusercontent.com',
+				pathname: '/**',
+				port: '',
+			},
+		],
+	},
 	async headers() {
 		return [
 			{
