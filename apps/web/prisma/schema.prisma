@@ -38,9 +38,30 @@ model Animal {
   @@index ([updatedAt])
 }
 
-
 enum Mark {
   MICROCHIP
   WASHER
   UNMARKED
 }
+
+
+model Species {
+    id String @id @default(cuid())
+	commonName String?
+	classification Classification
+    scientificName String
+	createdAt DateTime @default(now()) @db.Timestamptz(6)
+	updatedAt DateTime @default(now()) @db.Timestamptz(6)
+	deletedAt DateTime? @db.Timestamptz(6)
+
+	@@index ([id])
+	@@index ([commonName])
+	@@index ([scientificName])
+}
+
+enum Classification {
+    BIRD
+	REPTILE
+	MAMMAL
+}
+
