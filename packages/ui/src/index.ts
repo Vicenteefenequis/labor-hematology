@@ -12,6 +12,7 @@ export * from './dialog'
 export * from './popover'
 export * from './toggle-group'
 export * from './toggle'
+export * from './select'
 
 // providers
 export * from './theme-provider'
