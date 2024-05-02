@@ -14,7 +14,9 @@ export default function Template({
 			</Suspense>
 
 			<div className="flex flex-col px-4">
-				<Header />
+				<Suspense>
+					<Header />
+				</Suspense>
 
 				{children}
 			</div>
