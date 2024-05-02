@@ -14,28 +14,33 @@ datasource db {
 }
 
 model User {
-  id String @id @default(cuid())
-  name String?
-  email String? @unique
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
   emailVerified DateTime?
-  image String?
+  image         String?
 }
 
-
 model Animal {
-  id String @id @default(cuid())
-  name String
+  id           String    @id @default(cuid())
+  name         String
   trackingMark String?
-  markType Mark @default(UNMARKED)
-  age Int
-  gender String
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @db.Timestamptz(6)
-  deletedAt DateTime? @db.Timestamptz(6)
+  markType     Mark      @default(UNMARKED)
+  age          Age       @default(ADULT)
+  gender       Gender    @default(UNDEFINED)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @db.Timestamptz(6)
+  deletedAt    DateTime? @db.Timestamptz(6)
 
-  @@unique ([id, trackingMark])
-  @@index ([id])
-  @@index ([updatedAt])
+  @@unique([id, trackingMark])
+  @@index([id])
+  @@index([updatedAt])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNDEFINED
 }
 
 enum Mark {
@@ -44,24 +49,40 @@ enum Mark {
   UNMARKED
 }
 
-
 model Species {
-    id String @id @default(cuid())
-	commonName String?
-	classification Classification
-    scientificName String
-	createdAt DateTime @default(now()) @db.Timestamptz(6)
-	updatedAt DateTime @default(now()) @db.Timestamptz(6)
-	deletedAt DateTime? @db.Timestamptz(6)
+  id             String         @id @default(cuid())
+  commonName     String?
+  classification Classification
+  scientificName String
+  createdAt      DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime       @default(now()) @db.Timestamptz(6)
+  deletedAt      DateTime?      @db.Timestamptz(6)
+  Reference      Reference[]
 
-	@@index ([id])
-	@@index ([commonName])
-	@@index ([scientificName])
+  @@index([id])
+  @@index([commonName])
+  @@index([scientificName])
 }
 
 enum Classification {
-    BIRD
-	REPTILE
-	MAMMAL
+  BIRD
+  REPTILE
+  MAMMAL
 }
 
+model Reference {
+  id       String  @id @default(cuid())
+  specie   Species @relation(fields: [specieId], references: [id])
+  specieId String
+  gender   String
+  age      Age     @default(ADULT)
+  examType String
+  values   Json
+}
+
+enum Age {
+  CUB
+  YOUNG
+  ADULT
+  ELDERLY
+}
