@@ -2,13 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-	Button,
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
 	Form,
 	FormControl,
 	FormField,
@@ -16,80 +9,33 @@ import {
 	FormLabel,
 	FormMessage,
 	Input,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from '@labor/ui'
-import { cn } from '@labor/utils'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { useState } from 'react'
-import { UseFormReturn, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-function MarkTypeSelect({ form }: { form: UseFormReturn<ExamSchema> }) {
-	const [value, setValue] =
-		useState<z.infer<typeof markTypeSchema>>('UNMARKED')
+const markTypes: Record<string, MarkType> = {
+	'Sem marcação': 'UNMARKED',
+	Anilha: 'WASHER',
+	Microchip: 'MICROCHIP',
+}
 
-	const values = new Map<string, z.infer<typeof markTypeSchema>>([
-		['Sem marcação', 'UNMARKED'],
-		['Anilha', 'WASHER'],
-		['Microchip', 'MICROCHIP'],
-	])
+const ageOptions: Record<string, AgeOptions> = {
+	Filhote: 'CUB',
+	Jovem: 'YOUNG',
+	Adulto: 'ADULT',
+	Idoso: 'ELDERLY',
+}
 
-	return (
-		<Popover>
-			<PopoverTrigger asChild>
-				<Button
-					variant="outline"
-					role="combobox"
-					className="justify-between"
-				>
-					{value
-						? Object.entries(values)
-								.find(([, v]) => v === value)
-								?.flatMap(([k]) => [k])
-						: 'Sem marcação'}
-					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-				</Button>
-			</PopoverTrigger>
-
-			<PopoverContent>
-				<Command>
-					<CommandInput placeholder="Filtrar" />
-					<CommandList>
-						<CommandEmpty>No results</CommandEmpty>
-						<CommandGroup>
-							{['Sem marcação', 'Anilha', 'Microchip'].map(
-								label => (
-									<CommandItem
-										key={label}
-										value={label}
-										onSelect={currentvalue => {
-											form.setValue(
-												'markType',
-												values.get(currentvalue)!,
-											)
-											setValue(values.get(currentvalue)!)
-										}}
-									>
-										<Check
-											className={cn(
-												'mr-2 h-4 w-4',
-												value === values.get(label)
-													? 'opacity-100'
-													: 'opacity-0',
-											)}
-										/>{' '}
-										{label}
-									</CommandItem>
-								),
-							)}
-						</CommandGroup>
-					</CommandList>
-				</Command>
-			</PopoverContent>
-		</Popover>
-	)
+const genderOptions: Record<string, Gender> = {
+	Macho: 'MALE',
+	Fêmea: 'FEMALE',
+	Indefinido: 'UNDEFINED',
 }
 
 export default function Page() {
@@ -156,11 +102,35 @@ export default function Page() {
 						<FormField
 							control={form.control}
 							name="markType"
-							render={() => (
+							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Tipo</FormLabel>
 									<FormControl>
-										<MarkTypeSelect form={form} />
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+										>
+											<SelectTrigger>
+												<SelectValue
+													placeholder={'Sem marcação'}
+												/>
+											</SelectTrigger>
+
+											<SelectContent>
+												<SelectGroup>
+													{Object.entries(
+														markTypes,
+													).map(item => (
+														<SelectItem
+															key={item[1]}
+															value={item[1]}
+														>
+															{item[0]}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -174,7 +144,31 @@ export default function Page() {
 								<FormItem>
 									<FormLabel>Idade</FormLabel>
 									<FormControl>
-										<Input placeholder="45" {...field} />
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+										>
+											<SelectTrigger>
+												<SelectValue
+													placeholder={'Adulto'}
+												/>
+											</SelectTrigger>
+
+											<SelectContent>
+												<SelectGroup>
+													{Object.entries(
+														ageOptions,
+													).map(item => (
+														<SelectItem
+															key={item[1]}
+															value={item[1]}
+														>
+															{item[0]}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -241,10 +235,31 @@ export default function Page() {
 								<FormItem>
 									<FormLabel>Sexo</FormLabel>
 									<FormControl>
-										<Input
-											placeholder="Masculino"
-											{...field}
-										/>
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+										>
+											<SelectTrigger>
+												<SelectValue
+													placeholder={'Indefinido'}
+												/>
+											</SelectTrigger>
+
+											<SelectContent>
+												<SelectGroup>
+													{Object.entries(
+														genderOptions,
+													).map(item => (
+														<SelectItem
+															key={item[1]}
+															value={item[1]}
+														>
+															{item[0]}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -258,6 +273,14 @@ export default function Page() {
 }
 
 const markTypeSchema = z.enum(['UNMARKED', 'WASHER', 'MICROCHIP'])
+export type MarkType = z.infer<typeof markTypeSchema>
+
+const agesSchema = z.enum(['CUB', 'YOUNG', 'ADULT', 'ELDERLY'])
+export type AgeOptions = z.infer<typeof agesSchema>
+
+const genderSchema = z.enum(['MALE', 'FEMALE', 'UNDEFINED'])
+export type Gender = z.infer<typeof genderSchema>
+
 const examSchema = z.object({
 	entryTerm: z.string(),
 	animalName: z.string(),
@@ -265,8 +288,8 @@ const examSchema = z.object({
 	markType: markTypeSchema,
 	specie: z.string(),
 	commonName: z.string(),
-	age: z.number().positive().int(),
-	gender: z.enum(['MALE', 'FEMALE']),
+	age: agesSchema,
+	gender: z.enum(['MALE', 'FEMALE', 'UNDEFINED']),
 	classification: z.enum(['BIRD', 'REPTILE', 'MAMMAL', 'AMPHIBIAN']),
 })
 
