@@ -1,5 +1,6 @@
 'use client'
 
+import Autocomplete from '@/ui/autocomplete'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
 	Form,
@@ -43,6 +44,25 @@ export default function Page() {
 		resolver: zodResolver(examSchema),
 	})
 
+	const options: Array<{ label: string; value: string }> = [
+		{
+			label: 'Pandora',
+			value: 'pandora',
+		},
+		{
+			label: 'Bela',
+			value: 'bela',
+		},
+		{
+			label: 'Cão 1',
+			value: 'cao 1',
+		},
+		{
+			label: 'Gato 1',
+			value: 'gato 1',
+		},
+	]
+
 	return (
 		<div>
 			<Form {...form}>
@@ -72,7 +92,8 @@ export default function Page() {
 								<FormItem>
 									<FormLabel>Nome do animal</FormLabel>
 									<FormControl>
-										<Input
+										<Autocomplete
+											options={options}
 											placeholder="Many o mamute"
 											{...field}
 										/>
