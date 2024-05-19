@@ -23,6 +23,7 @@ const animalContentResponseSchema = z.object({
 	markType: markTypeSchema.nullable(),
 	age: ageSchema,
 	gender: genderSchema,
+	speciesId: z.string(),
 	createdAt: z.string().datetime(),
 	updatedAt: z.string().datetime(),
 	deletedAt: z.string().datetime().nullable(),
@@ -36,3 +37,17 @@ const animalResponseSchema = z.object({
 })
 
 export type AnimalSearchResponse = z.infer<typeof animalResponseSchema>
+
+/* ---------------------------------------------------------------------------------- */
+
+export const speciesResponseSchema = z.object({
+	id: z.string(),
+	commonName: z.string().optional(),
+	classification: z.enum(['BIRD', 'REPTILE', 'MAMMAL']),
+	scientificName: z.string({ required_error: 'scientif name is required' }),
+	createdAt: z.string().datetime(),
+	updatedAt: z.string().datetime(),
+	deletedAt: z.string().datetime().nullable(),
+})
+
+export type SpeciesResponse = z.infer<typeof speciesResponseSchema>

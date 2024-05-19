@@ -18,6 +18,7 @@ export const animalSchema = z.object({
 	markType: markTypeSchema.optional(),
 	age: ageSchema.optional(),
 	gender: genderSchema,
+	speciesId: z.string({ required_error: 'speciesId is required' }),
 })
 
 export type Animal = z.infer<typeof animalSchema>

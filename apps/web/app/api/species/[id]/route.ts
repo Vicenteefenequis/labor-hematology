@@ -2,6 +2,7 @@ import { LaborApiError, handleAndReturnErrorResponse } from '@/lib/api/errors'
 import { logError } from '@/lib/pino/logger'
 import prisma from '@/lib/prisma'
 import { speciesSchema } from '@/lib/zod/species-schema'
+import { DASHBOARD_DOMAIN } from '@labor/utils'
 
 export async function GET(
 	request: Request,
@@ -22,7 +23,9 @@ export async function GET(
 				message: 'species not found',
 			})
 
-		return Response.json(species)
+		return Response.json(species, {
+			headers: { 'Access-Control-Allow-Origin': DASHBOARD_DOMAIN },
+		})
 	} catch (error) {
 		logError(error, 'get: animals resource error')
 		return handleAndReturnErrorResponse(error)

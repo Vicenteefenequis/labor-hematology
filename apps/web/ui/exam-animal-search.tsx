@@ -20,12 +20,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export interface ExamAnimalSearchProps {
 	placeholder?: string
 	onSelect?: (animal: AnimalResponse) => void
+	openNewAnimalModal?: () => void
 }
 
 export default function ExamAnimalSearch({
 	placeholder,
 	onSelect,
+	openNewAnimalModal,
 }: ExamAnimalSearchProps) {
+	const [open, setOpen] = useState(false)
 	const [value, setValue] = useState('')
 	const [search, setSearch] = useState('')
 
@@ -37,18 +40,28 @@ export default function ExamAnimalSearch({
 	useEffect(() => {
 		if (search) {
 			searchTimerRef.current = setTimeout(() => {
-				console.log('Calling API')
 				setLoading(true)
 				fetch('http://api.localhost:3000/animals?search=' + search)
 					.then(async response => {
 						const result =
 							(await response.json()) as AnimalSearchResponse
 
-						console.log(result.content)
 						setAnimals(result.content)
 					})
 					.finally(() => setLoading(false))
 			}, 700)
+		} else {
+			if (animals.length === 0) {
+				setLoading(true)
+				fetch('http://api.localhost:3000/animals?limit=5')
+					.then(async response => {
+						const result =
+							(await response.json()) as AnimalSearchResponse
+
+						setAnimals(result.content)
+					})
+					.finally(() => setLoading(false))
+			}
 		}
 
 		return () => {
@@ -61,10 +74,11 @@ export default function ExamAnimalSearch({
 	const handleSelect = useCallback((animal: AnimalResponse) => {
 		onSelect?.(animal)
 		setValue(animal.name)
+		setOpen(false)
 	}, [])
 
 	return (
-		<Popover>
+		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
@@ -101,30 +115,34 @@ export default function ExamAnimalSearch({
 						{!loading && animals.length === 0 && (
 							<CommandEmpty className="flex flex-col gap-2 py-4 w-full items-center">
 								<span>Nenhum animal encontrado</span>
-								<Button variant="secondary">
+								<Button
+									variant="secondary"
+									onClick={openNewAnimalModal}
+								>
 									Cadastre um novo animal
 								</Button>
 							</CommandEmpty>
 						)}
 
-						{animals.map(animal => (
-							<CommandItem
-								key={animal.id}
-								value={animal.name}
-								onSelect={() => handleSelect(animal)}
-							>
-								<Check
-									className={cn(
-										'w-5 h-5 mr-2',
-										value === animal.name
-											? 'opacity-100'
-											: 'opacity-0',
-									)}
-								/>
-								{animal.name}{' '}
-								{animal.trackingMark && animal.trackingMark}
-							</CommandItem>
-						))}
+						{!loading &&
+							animals.map(animal => (
+								<CommandItem
+									key={animal.id}
+									value={animal.name}
+									onSelect={() => handleSelect(animal)}
+								>
+									<Check
+										className={cn(
+											'w-5 h-5 mr-2',
+											value === animal.name
+												? 'opacity-100'
+												: 'opacity-0',
+										)}
+									/>
+									{animal.name}{' '}
+									{animal.trackingMark && animal.trackingMark}
+								</CommandItem>
+							))}
 					</CommandList>
 				</Command>
 			</PopoverContent>
