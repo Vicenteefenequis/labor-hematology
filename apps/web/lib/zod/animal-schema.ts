@@ -8,9 +8,11 @@ export const animalSchema = z.object({
 			message: 'mark type should be one of MICROCHP, WASHER or UNMARKED',
 		})
 		.optional(),
-	age: z.number({ required_error: 'age should be a number' }).positive({
-		message: 'age should be a positive integer',
-	}),
+	age: z
+		.enum(['CUB', 'YOUNG', 'ADULT', 'ELDERLY'], {
+			message: 'age should be one of CUB, YOUNG, ADULT, ELDERLY',
+		})
+		.optional(),
 	gender: z.enum(['MALE', 'FEMALE', 'UNDEFINED'], {
 		required_error: 'gender should be one of MALE, FEMALE or UNDEFINED',
 	}),
