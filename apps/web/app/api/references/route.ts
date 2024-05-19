@@ -10,10 +10,7 @@ export async function POST(request: Request) {
 		const reference = referenceSchema.parse(body)
 
 		const result = await prisma.reference.create({
-			data: {
-				...reference,
-				values: reference.values,
-			},
+			data: reference,
 			select: {
 				id: true,
 			},
