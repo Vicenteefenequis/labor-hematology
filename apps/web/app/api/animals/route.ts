@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma'
 import { handleAndReturnErrorResponse } from '@/lib/api/errors'
 import { getPagination, getSearchParams, handlePaginate } from '@labor/utils'
 import { animalSchema } from '@/lib/zod/animal-schema'
+import { logError } from '@/lib/pino/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
 		})
 		return Response.json(result, { status: 201 })
 	} catch (error) {
+		logError(error, 'post: animals resource error')
 		return handleAndReturnErrorResponse(error)
 	}
 }
@@ -80,6 +82,7 @@ export async function GET(request: Request) {
 			pagination: handlePaginate(request.url, count),
 		})
 	} catch (error) {
+		logError(error, 'get: animals resource error')
 		return handleAndReturnErrorResponse(error)
 	}
 }
