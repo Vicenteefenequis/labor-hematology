@@ -29,6 +29,10 @@ const markTypes: Record<string, MarkType> = {
 	Microchip: 'MICROCHIP',
 }
 
+const reverseMarkTypes = new Map<string, string>(
+	Object.entries(markTypes).map(item => [item[1], item[0]]),
+)
+
 const ageOptions: Record<string, AgeOptions> = {
 	Filhote: 'CUB',
 	Jovem: 'YOUNG',
