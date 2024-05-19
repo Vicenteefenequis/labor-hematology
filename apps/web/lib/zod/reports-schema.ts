@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { jsonSchema } from './json-schema'
 
-export const referenceSchema = z.object({
+export const reportsSchema = z.object({
+	userId: z.string({ required_error: 'user id is required' }),
 	specieId: z.string({ required_error: 'specie id is required' }),
 	gender: z.enum(['MALE', 'FEMALE', 'UNDEFINED'], {
 		required_error: 'gender should be one of MALE, FEMALE or UNDEFINED',
