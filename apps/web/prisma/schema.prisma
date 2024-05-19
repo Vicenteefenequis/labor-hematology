@@ -71,13 +71,16 @@ enum Classification {
 }
 
 model Reference {
-  id       String  @id @default(cuid())
-  specie   Species @relation(fields: [specieId], references: [id])
-  specieId String
-  gender   String
-  age      Age     @default(ADULT)
-  examType String
-  values   Json
+  id        String    @id @default(cuid())
+  specie    Species   @relation(fields: [specieId], references: [id])
+  specieId  String
+  gender    Gender
+  age       Age       @default(ADULT)
+  examType  String
+  values    Json?
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
 }
 
 enum Age {

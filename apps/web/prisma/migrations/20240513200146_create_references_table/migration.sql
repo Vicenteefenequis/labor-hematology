@@ -21,10 +21,13 @@ ADD COLUMN     "gender" "Gender" NOT NULL DEFAULT 'UNDEFINED';
 CREATE TABLE "Reference" (
     "id" TEXT NOT NULL,
     "specieId" TEXT NOT NULL,
-    "gender" TEXT NOT NULL,
+    "gender" "Gender" NOT NULL,
     "age" "Age" NOT NULL DEFAULT 'ADULT',
     "examType" TEXT NOT NULL,
-    "values" JSONB NOT NULL,
+    "values" JSONB,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMPTZ(6),
 
     CONSTRAINT "Reference_pkey" PRIMARY KEY ("id")
 );
