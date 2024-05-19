@@ -1,6 +1,7 @@
 'use client'
 
-import Autocomplete from '@/ui/autocomplete'
+import { AnimalResponse } from '@/lib/api/responses'
+import AnimalSearch from '@/ui/exam-animal-search'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
 	Form,
@@ -26,6 +27,10 @@ const markTypes: Record<string, MarkType> = {
 	Microchip: 'MICROCHIP',
 }
 
+const reverseMarkTypes = new Map<string, string>(
+	Object.entries(markTypes).map(item => [item[1], item[0]]),
+)
+
 const ageOptions: Record<string, AgeOptions> = {
 	Filhote: 'CUB',
 	Jovem: 'YOUNG',
@@ -33,35 +38,40 @@ const ageOptions: Record<string, AgeOptions> = {
 	Idoso: 'ELDERLY',
 }
 
+const reverseAgeOptions = new Map<string, string>(
+	Object.entries(ageOptions).map(item => [item[1], item[0]]),
+)
+
 const genderOptions: Record<string, Gender> = {
 	Macho: 'MALE',
 	Fêmea: 'FEMALE',
 	Indefinido: 'UNDEFINED',
 }
 
+const reverseGenderOptions = new Map<string, string>(
+	Object.entries(genderOptions).map(item => [item[1], item[0]]),
+)
+
 export default function Page() {
 	const form = useForm<ExamSchema>({
 		resolver: zodResolver(examSchema),
 	})
 
-	const options: Array<{ label: string; value: string }> = [
-		{
-			label: 'Pandora',
-			value: 'pandora',
-		},
-		{
-			label: 'Bela',
-			value: 'bela',
-		},
-		{
-			label: 'Cão 1',
-			value: 'cao 1',
-		},
-		{
-			label: 'Gato 1',
-			value: 'gato 1',
-		},
-	]
+	const handleSelectAnimal = (animal: AnimalResponse) => {
+		form.setValue('animalName', animal.name)
+		if (animal.trackingMark)
+			form.setValue('trackingMark', animal.trackingMark)
+
+		if (animal.markType) {
+			form.setValue(
+				'markType',
+				reverseMarkTypes.get(animal.markType)! as any,
+			)
+		}
+
+		form.setValue('age', animal.age)
+		form.setValue('gender', animal.gender)
+	}
 
 	return (
 		<div>
@@ -92,9 +102,9 @@ export default function Page() {
 								<FormItem>
 									<FormLabel>Nome do animal</FormLabel>
 									<FormControl>
-										<Autocomplete
-											options={options}
+										<AnimalSearch
 											placeholder="Many o mamute"
+											onSelect={handleSelectAnimal}
 											{...field}
 										/>
 									</FormControl>
@@ -172,7 +182,12 @@ export default function Page() {
 											<SelectTrigger>
 												<SelectValue
 													placeholder={'Adulto'}
-												/>
+													aria-label={field.value}
+												>
+													{reverseAgeOptions.get(
+														field.value,
+													) ?? field.value}
+												</SelectValue>
 											</SelectTrigger>
 
 											<SelectContent>
@@ -263,7 +278,11 @@ export default function Page() {
 											<SelectTrigger>
 												<SelectValue
 													placeholder={'Indefinido'}
-												/>
+												>
+													{reverseGenderOptions.get(
+														field.value,
+													)}
+												</SelectValue>
 											</SelectTrigger>
 
 											<SelectContent>
