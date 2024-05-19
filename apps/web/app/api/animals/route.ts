@@ -53,11 +53,13 @@ export async function GET(request: Request) {
 					{
 						name: {
 							contains: params.search,
+							mode: 'insensitive',
 						},
 					},
 					{
 						trackingMark: {
 							contains: params.search,
+							mode: 'insensitive',
 						},
 					},
 				],
