@@ -14,7 +14,14 @@ export default function Template({
 			</Suspense>
 
 			<div className="flex flex-col px-4">
-				<Suspense>
+				<Suspense
+					fallback={
+						<div className="h-[88px] flex gap-4 items-center">
+							<div className="w-10 h-10 animate-pulse bg-muted-foreground/20 rounded-full"></div>
+							<div className="w-64 h-5 animate-pulse bg-muted-foreground/20 rounded"></div>
+						</div>
+					}
+				>
 					<Header />
 				</Suspense>
 

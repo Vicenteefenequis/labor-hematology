@@ -32,6 +32,9 @@ model Animal {
   updatedAt    DateTime  @default(now()) @db.Timestamptz(6)
   deletedAt    DateTime? @db.Timestamptz(6)
 
+  speciesId String
+  species   Species @relation(fields: [speciesId], references: [id])
+
   @@unique([id, trackingMark])
   @@index([id])
   @@index([updatedAt])
@@ -58,6 +61,7 @@ model Species {
   updatedAt      DateTime       @default(now()) @db.Timestamptz(6)
   deletedAt      DateTime?      @db.Timestamptz(6)
   Reference      Reference[]
+  Animal         Animal[]
 
   @@index([id])
   @@index([commonName])
