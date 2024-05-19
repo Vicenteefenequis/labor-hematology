@@ -1,7 +1,18 @@
 export const getSearchParams = (url: string) => {
-	let params = {} as Record<string, string>
+	let params = {} as Record<string, string | string[]>
 
 	new URL(url).searchParams.forEach(function (value, key) {
+		if (key.includes('[]')) {
+			const clearKey = key.replace('[]', '')
+			if (Array.isArray(params[clearKey])) {
+				;(params[clearKey] as string[]).push(value)
+			} else {
+				params[clearKey] = [value]
+			}
+
+			return
+		}
+
 		params[key] = value
 	})
 

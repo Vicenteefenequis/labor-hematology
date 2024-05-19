@@ -1,6 +1,12 @@
 import prisma from '@/lib/prisma'
 import { handleAndReturnErrorResponse } from '@/lib/api/errors'
-import { getPagination, getSearchParams, handlePaginate } from '@labor/utils'
+import {
+	APP_DOMAIN,
+	DASHBOARD_DOMAIN,
+	getPagination,
+	getSearchParams,
+	handlePaginate,
+} from '@labor/utils'
 import { animalSchema } from '@/lib/zod/animal-schema'
 import { logError } from '@/lib/pino/logger'
 
@@ -14,9 +20,7 @@ export async function POST(request: Request) {
 
 		const result = await prisma.animal.create({
 			data: animal,
-			select: {
-				id: true,
-			},
+			select: { id: true },
 		})
 		return Response.json(result, { status: 201 })
 	} catch (error) {
@@ -49,11 +53,13 @@ export async function GET(request: Request) {
 					{
 						name: {
 							contains: params.search,
+							mode: 'insensitive',
 						},
 					},
 					{
 						trackingMark: {
 							contains: params.search,
+							mode: 'insensitive',
 						},
 					},
 				],
@@ -77,10 +83,13 @@ export async function GET(request: Request) {
 			prisma.animal.count({ where: { deletedAt } }),
 		])
 
-		return Response.json({
-			content: animals,
-			pagination: handlePaginate(request.url, count),
-		})
+		return Response.json(
+			{
+				content: animals,
+				pagination: handlePaginate(request.url, count),
+			},
+			{ headers: { 'Access-Control-Allow-Origin': DASHBOARD_DOMAIN } },
+		)
 	} catch (error) {
 		logError(error, 'get: animals resource error')
 		return handleAndReturnErrorResponse(error)
