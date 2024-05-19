@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { LaborApiError, handleAndReturnErrorResponse } from '@/lib/api/errors'
 import { animalSchema } from '@/lib/zod/animal-schema'
+import { logError } from '@/lib/pino/logger'
 
 export async function GET(
 	request: Request,
@@ -13,6 +14,7 @@ export async function GET(
 				id,
 			},
 		})
+
 		if (!animal)
 			throw new LaborApiError({
 				code: 'not_found',
@@ -20,6 +22,7 @@ export async function GET(
 			})
 		return Response.json(animal)
 	} catch (error) {
+		logError(error, 'get: animals resource error', request)
 		return handleAndReturnErrorResponse(error)
 	}
 }
@@ -40,6 +43,7 @@ export async function PATCH(
 
 		return new Response(null, { status: 204 })
 	} catch (error) {
+		logError(error, 'patch: animals resource error', request)
 		return handleAndReturnErrorResponse(error)
 	}
 }
@@ -60,6 +64,7 @@ export async function PUT(
 		})
 		return new Response(null, { status: 204 })
 	} catch (error) {
+		logError(error, 'put: animals resource error', request)
 		return handleAndReturnErrorResponse(error)
 	}
 }
@@ -77,6 +82,7 @@ export async function DELETE(
 		})
 		return new Response(null, { status: 204 })
 	} catch (error) {
+		logError(error, 'delete: animals resource error', request)
 		return handleAndReturnErrorResponse(error)
 	}
 }
