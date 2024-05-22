@@ -19,6 +19,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  Report        Report[]
 }
 
 model Animal {
@@ -62,6 +63,7 @@ model Species {
   deletedAt      DateTime?      @db.Timestamptz(6)
   Reference      Reference[]
   Animal         Animal[]
+  Report         Report[]
 
   @@index([id])
   @@index([commonName])
@@ -92,4 +94,21 @@ enum Age {
   YOUNG
   ADULT
   ELDERLY
+}
+
+model Report {
+  id        String    @id @default(cuid())
+  gender    Gender
+  age       Age       @default(ADULT)
+  examType  String
+  values    Json?
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  specieId String
+  specie   Species @relation(fields: [specieId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
