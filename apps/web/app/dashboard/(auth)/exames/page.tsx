@@ -22,16 +22,13 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import AddAnimalModal from '@/ui/add-animal-modal'
+import { API_DOMAIN } from '@labor/utils'
 
 const markTypes: Record<string, MarkType> = {
 	'Sem marcação': 'UNMARKED',
 	Anilha: 'WASHER',
 	Microchip: 'MICROCHIP',
 }
-
-const reverseMarkTypes = new Map<string, string>(
-	Object.entries(markTypes).map(item => [item[1], item[0]]),
-)
 
 const ageOptions: Record<string, AgeOptions> = {
 	Filhote: 'CUB',
@@ -40,19 +37,11 @@ const ageOptions: Record<string, AgeOptions> = {
 	Idoso: 'ELDERLY',
 }
 
-const reverseAgeOptions = new Map<string, string>(
-	Object.entries(ageOptions).map(item => [item[1], item[0]]),
-)
-
 const genderOptions: Record<string, Gender> = {
 	Macho: 'MALE',
 	Fêmea: 'FEMALE',
 	Indefinido: 'UNDEFINED',
 }
-
-const reverseGenderOptions = new Map<string, string>(
-	Object.entries(genderOptions).map(item => [item[1], item[0]]),
-)
 
 export default function Page() {
 	const [loading, setLoading] = useState(false)
@@ -85,7 +74,7 @@ export default function Page() {
 		form.setValue('age', animal.age)
 		form.setValue('gender', animal.gender)
 
-		fetch(`http://api.localhost:3000/species/${animal.speciesId}`)
+		fetch(`${API_DOMAIN}/species/${animal.speciesId}`)
 			.then(async response => {
 				const result = (await response.json()) as SpeciesResponse
 

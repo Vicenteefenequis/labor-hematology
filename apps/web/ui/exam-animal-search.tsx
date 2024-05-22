@@ -13,7 +13,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@labor/ui'
-import { cn } from '@labor/utils'
+import { API_DOMAIN, cn } from '@labor/utils'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -41,7 +41,7 @@ export default function ExamAnimalSearch({
 		if (search) {
 			searchTimerRef.current = setTimeout(() => {
 				setLoading(true)
-				fetch('http://api.localhost:3000/animals?search=' + search)
+				fetch(`${API_DOMAIN}/animals?search=${search}`)
 					.then(async response => {
 						const result =
 							(await response.json()) as AnimalSearchResponse
