@@ -1,6 +1,7 @@
 'use client'
 
-import { AnimalResponse } from '@/lib/api/responses'
+import { useState } from 'react'
+import { AnimalResponse, SpeciesResponse } from '@/lib/api/responses'
 import AnimalSearch from '@/ui/exam-animal-search'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -20,16 +21,14 @@ import {
 } from '@labor/ui'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import AddAnimalModal from '@/ui/add-animal-modal'
+import { API_DOMAIN } from '@labor/utils'
 
 const markTypes: Record<string, MarkType> = {
 	'Sem marcação': 'UNMARKED',
 	Anilha: 'WASHER',
 	Microchip: 'MICROCHIP',
 }
-
-const reverseMarkTypes = new Map<string, string>(
-	Object.entries(markTypes).map(item => [item[1], item[0]]),
-)
 
 const ageOptions: Record<string, AgeOptions> = {
 	Filhote: 'CUB',
@@ -38,39 +37,52 @@ const ageOptions: Record<string, AgeOptions> = {
 	Idoso: 'ELDERLY',
 }
 
-const reverseAgeOptions = new Map<string, string>(
-	Object.entries(ageOptions).map(item => [item[1], item[0]]),
-)
-
 const genderOptions: Record<string, Gender> = {
 	Macho: 'MALE',
 	Fêmea: 'FEMALE',
 	Indefinido: 'UNDEFINED',
 }
 
-const reverseGenderOptions = new Map<string, string>(
-	Object.entries(genderOptions).map(item => [item[1], item[0]]),
-)
-
 export default function Page() {
+	const [loading, setLoading] = useState(false)
+	const [open, setOpen] = useState(false)
+
 	const form = useForm<ExamSchema>({
 		resolver: zodResolver(examSchema),
+		defaultValues: {
+			markType: 'UNMARKED',
+			age: 'ADULT',
+			gender: 'UNDEFINED',
+		},
 	})
 
 	const handleSelectAnimal = (animal: AnimalResponse) => {
+		setLoading(true)
 		form.setValue('animalName', animal.name)
-		if (animal.trackingMark)
+		if (animal.trackingMark) {
 			form.setValue('trackingMark', animal.trackingMark)
+		} else {
+			form.setValue('trackingMark', '')
+		}
 
 		if (animal.markType) {
-			form.setValue(
-				'markType',
-				reverseMarkTypes.get(animal.markType)! as any,
-			)
+			form.setValue('markType', animal.markType)
+		} else {
+			form.setValue('markType', 'UNMARKED')
 		}
 
 		form.setValue('age', animal.age)
 		form.setValue('gender', animal.gender)
+
+		fetch(`${API_DOMAIN}/species/${animal.speciesId}`)
+			.then(async response => {
+				const result = (await response.json()) as SpeciesResponse
+
+				form.setValue('specie', result.scientificName)
+				form.setValue('commonName', result.commonName!)
+				form.setValue('classification', result.classification)
+			})
+			.finally(() => setLoading(false))
 	}
 
 	return (
@@ -105,6 +117,9 @@ export default function Page() {
 										<AnimalSearch
 											placeholder="Many o mamute"
 											onSelect={handleSelectAnimal}
+											openNewAnimalModal={() =>
+												setOpen(true)
+											}
 											{...field}
 										/>
 									</FormControl>
@@ -136,33 +151,34 @@ export default function Page() {
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Tipo</FormLabel>
-									<FormControl>
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
+									<Select
+										onValueChange={value =>
+											form.setValue(
+												'markType',
+												value as any,
+											)
+										}
+										value={field.value}
+									>
+										<FormControl>
 											<SelectTrigger>
-												<SelectValue
-													placeholder={'Sem marcação'}
-												/>
+												<SelectValue placeholder="Sem marcação" />
 											</SelectTrigger>
+										</FormControl>
 
-											<SelectContent>
-												<SelectGroup>
-													{Object.entries(
-														markTypes,
-													).map(item => (
-														<SelectItem
-															key={item[1]}
-															value={item[1]}
-														>
-															{item[0]}
-														</SelectItem>
-													))}
-												</SelectGroup>
-											</SelectContent>
-										</Select>
-									</FormControl>
+										<SelectContent>
+											{Object.entries(markTypes).map(
+												([label, value]) => (
+													<SelectItem
+														key={value}
+														value={value}
+													>
+														{label}
+													</SelectItem>
+												),
+											)}
+										</SelectContent>
+									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
@@ -177,17 +193,10 @@ export default function Page() {
 									<FormControl>
 										<Select
 											onValueChange={field.onChange}
-											defaultValue={field.value}
+											value={field.value}
 										>
 											<SelectTrigger>
-												<SelectValue
-													placeholder={'Adulto'}
-													aria-label={field.value}
-												>
-													{reverseAgeOptions.get(
-														field.value,
-													) ?? field.value}
-												</SelectValue>
+												<SelectValue placeholder="Adulto" />
 											</SelectTrigger>
 
 											<SelectContent>
@@ -222,6 +231,7 @@ export default function Page() {
 									<FormControl>
 										<Input
 											placeholder="Mamute"
+											disabled={loading || field.disabled}
 											{...field}
 										/>
 									</FormControl>
@@ -239,6 +249,7 @@ export default function Page() {
 									<FormControl>
 										<Input
 											placeholder="Mammuthus"
+											disabled={loading || field.disabled}
 											{...field}
 										/>
 									</FormControl>
@@ -256,6 +267,7 @@ export default function Page() {
 									<FormControl>
 										<Input
 											placeholder="Mamífero"
+											disabled={loading || field.disabled}
 											{...field}
 										/>
 									</FormControl>
@@ -273,16 +285,10 @@ export default function Page() {
 									<FormControl>
 										<Select
 											onValueChange={field.onChange}
-											defaultValue={field.value}
+											value={field.value}
 										>
 											<SelectTrigger>
-												<SelectValue
-													placeholder={'Indefinido'}
-												>
-													{reverseGenderOptions.get(
-														field.value,
-													)}
-												</SelectValue>
+												<SelectValue placeholder="Indefinido" />
 											</SelectTrigger>
 
 											<SelectContent>
@@ -308,6 +314,8 @@ export default function Page() {
 					</div>
 				</form>
 			</Form>
+
+			<AddAnimalModal open={open} onOpenChange={setOpen} />
 		</div>
 	)
 }
